@@ -1,0 +1,42 @@
+{
+    "name": "flare",
+    "children": 
+    [
+        {
+            "name": "analytics",
+            "children": 
+            [
+                {
+                    "name": "Germany",
+                    "color": "#9ACD32",
+                    "size": 27
+                },
+                {
+                    "name": "France",
+                    "color": "#377DB8",
+                    "size": 20.20
+                },
+                {
+                    "name": "Italy",
+                    "color": "#F5DEB3",
+                    "size": 17.80
+                },
+                {
+                    "name": "Spain",
+                    "color": "#EE82EE",
+                    "size": 11.80
+                },
+                {
+                    "name": "Netherlands",
+                    "color": "#40E0D0",
+                    "size": 5.70
+                },
+                {
+                    "name": "Others",
+                    "color": "#FF6347",
+                    "size": 17.50
+                }
+            ]
+        }
+    ]
+}

@@ -1,6 +1,6 @@
 body {
-  margin: 2px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
   width: 100%;
   font-family: 'Lato',serif;
   color: #000;
@@ -14,13 +14,18 @@ body {
   display: none; }
 
 h1 {
-  position: fixed;
-  top: 20%;
-  left: 50%;
-  -webkit-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
   font-size: 30px;
-  background: rgba(255, 255, 255, 0.7);
-  padding: 20px 40px; }
+  margin: 0;
+  padding: 0; }
+
+.centered {
+  position: relative;
+  width: 850px;
+  height: 500px;
+  margin: 0 auto; }
+
+.header {
+  position: relative;
+  margin: 20px; }
 
 /*# sourceMappingURL=styles.css.map */

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=utf-8 />
+    <title>Greeks bailout representation</title>
+    <link href='http://fonts.googleapis.com/css?family=Lato:400,300|Droid+Serif|Oswald:400,300,700|Stalemate|Quicksand:300|Josefin+Sans:100|Sigmar+One|Exo+2:100' rel=stylesheet type=text/css>
+
+    <link href='css/styles.css' rel=stylesheet type=text/css>
+
+    <style>
+
+    form {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+    }
+
+    .node {
+        border: solid 2px white;
+        font-size: 30px;
+        font-weight: 100;
+        position: absolute;
+        top: 0px;
+        left: 5px;
+    }
+
+    </style>
+
+    <!--[if IE]>
+    <script src=http://html5shiv.googlecode.com/svn/trunk/html5.js></script>
+    <![endif]-->
+
+</head>
+<body>
+
+<div class='header'>
+    <h1>Greek bailout representation</h1>
+    <h3>The following visualizations pretend to show information related to the crisis in Europe during this 2015.</h3>
+</div>
+    
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+<script>
+
+
+var margin = {top: 40, right: 10, bottom: 10, left: 10},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var color = d3.scale.category20c();
+
+var treemap = d3.layout.treemap()
+    .size([width, height])
+    .sticky(true)
+    .value(function(d) { return d.size; });
+
+var div = d3.select("body").append("div")
+    .style("position", "relative")
+    .style("width", (width + margin.left + margin.right) + "px")
+    .style("height", (height + margin.top + margin.bottom) + "px")
+    .style("left", margin.left + "px")
+    .style("top", margin.top + "px");
+
+
+d3.csv("data/countries-colors.csv", function(countries) {
+    d3.json("data/treemap.json", function(error, root) {
+        if (error) throw error;
+
+        var node = div.datum(root).selectAll(".node")
+            .data(treemap.nodes)
+            .enter().append("div")
+            .attr("class", "node")
+            .call(position)
+            .style("background", function(d) { return d.color })
+            .text(function(d) { 
+                return d.children ? null : d.name; 
+            });
+
+        d3.selectAll("input").on("change", function change() {
+            var value = this.value === "count" ? function() { return 1; } : function(d) { return d.size; };
+
+            node
+                .data(treemap.value(value).nodes)
+                .transition()
+                .duration(1500)
+                .call(position);
+        });
+    });
+});
+
+function position() {
+    this.style("left", function(d) { return d.x + "px"; })
+        .style("top", function(d) { return d.y + "px"; })
+        .style("width", function(d) { return Math.max(0, d.dx - 1) + "px"; })
+        .style("height", function(d) { return Math.max(0, d.dy - 1) + "px"; });
+}
+
+</script>
+
+</html>

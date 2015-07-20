@@ -1,21 +1,118 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset=utf-8 />
-<title>Greeks bailout representation</title>
-<link href='http://fonts.googleapis.com/css?family=Lato:400,300|Droid+Serif|Oswald:400,300,700|Stalemate|Quicksand:300|Josefin+Sans:100|Sigmar+One|Exo+2:100' rel=stylesheet type=text/css>
+    <meta charset=utf-8 />
+    <title>Greeks bailout representation</title>
+    <link href='http://fonts.googleapis.com/css?family=Lato:400,300|Droid+Serif|Oswald:400,300,700|Stalemate|Quicksand:300|Josefin+Sans:100|Sigmar+One|Exo+2:100' rel=stylesheet type=text/css>
 
-<link href='css/styles.css' rel=stylesheet type=text/css>
+    <link href='css/styles.css' rel=stylesheet type=text/css>
 
+    <style>
 
-<!--[if IE]>
-<script src=http://html5shiv.googlecode.com/svn/trunk/html5.js></script>
-<![endif]-->
-</script>
+        .chord path {
+            fill-opacity: .67;
+            stroke: #000;
+            stroke-width: .5px;
+        }
+
+    </style>
+
+    <!--[if IE]>
+    <script src=http://html5shiv.googlecode.com/svn/trunk/html5.js></script>
+    <![endif]-->
+
 </head>
 <body>
 
+<div class='header'>
+    <h1>Greek bailout representation</h1>
+    <h3>The following visualizations pretend to show information related to the crisis in Europe during this 2015.</h3>
+</div>
     
 </body>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+<script>
+
+var width = 850;
+var height = 500;
+var innerRadius = Math.min(width, height) * .41;
+var outerRadius = innerRadius * 1.1;
+
+var chord = d3.layout.chord()
+    .padding(.04)
+    .sortSubgroups(d3.descending)
+    .sortChords(d3.ascending);
+
+var fill = d3.scale.ordinal()
+    .domain(d3.range(4))
+    .range(["#000000", "#FFDD89", "#957244", "#F26223"]);
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("class", "centered")
+    .append("g")
+    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+var arc = d3.svg.arc()
+    .innerRadius(innerRadius)
+    .outerRadius(outerRadius);
+
+d3.csv("data/countries-colors.csv", function(countries) {
+
+    d3.json("data/data.json", function(matrix) {
+
+        chord.matrix(matrix);
+
+        var group = svg.selectAll(".group")
+            .data(chord.groups)
+            .enter().append("g")
+            .attr("class", "group")
+            .on("mouseover", fade(.1))
+            .on("mouseout", fade(1));
+
+        // Add the group arc.
+        var groupPath = group.append("path")
+            .attr("id", function(d, i) { return "group" + i; })
+            .attr("d", arc)
+            .style("fill", function(d, i) { return countries[i].color; });
+ 
+        // Add a text label.
+        var groupText = group.append("text")
+            .attr("x", 6)
+            .attr("dy", 15);
+         
+        groupText.append("textPath")
+            .attr("xlink:href", function(d, i) { return "#group" + i; })
+            .text(function(d, i) { return countries[i].name; });
+         
+        // Remove the labels that don't fit. :(
+        groupText.filter(function(d, i) { return groupPath[0][i].getTotalLength() / 2 - 16 < this.getComputedTextLength(); })
+        .remove();
+
+        svg.append("g")
+            .attr("class", "chord")
+          .selectAll("path")
+            .data(chord.chords)
+          .enter().append("path")
+            .attr("d", d3.svg.chord().radius(innerRadius))
+            .style("fill", function(d) { return fill(d.target.index); })
+            .style("opacity", 1);
+
+        // Returns an event handler for fading a given chord group.
+        function fade(opacity) {
+            return function(g, i) {
+                svg.selectAll(".chord path")
+                    .filter(function(d) { return d.source.index != i && d.target.index != i; })
+                    .transition()
+                    .style("opacity", opacity);
+            };
+        }
+
+    });
+});
+
+</script>
+
 </html>
