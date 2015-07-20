@@ -1,2 +1,2 @@
-# Greeks-bailout-representation
-A visual representation about the greek bailout. 
+## Greeks bailout representation
+A simple visual representation about the distribution of the greek bailout.
