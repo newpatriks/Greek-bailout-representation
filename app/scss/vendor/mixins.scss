@@ -1,0 +1,8 @@
+@mixin debug_background($color: $color-hover-state, $opacity: 0.7) {
+  background: $color;
+  background: rgba($color, $opacity);
+}
+
+@mixin debug_border($border-width: 1px, $style: solid, $color: #000) {
+  border: $border-width $style $color;
+}
